@@ -1,10 +1,12 @@
 #include "pch.h"
 #include "Hooks.h"
 #include "ada.h"
+#include "Util.h"
 
 #include <string>
 #include <iostream>
-#include <map>
+#include <algorithm>
+#include <iterator>
 
 const DWORD Hooks::ModuleBase = (DWORD)GetModuleHandle(NULL);
 
@@ -72,7 +74,13 @@ BOOL _cdecl Hooks::DoTrustCheck(const char* url)
 		return FALSE;
 	}
 
-	std::cout << _url->get_host() << "\n";
+	// Check host against allowed hosts
 
-	return TRUE;
+	if (std::find(std::begin(Util::AllowedHosts), std::end(Util::AllowedHosts), _url->get_host()) != std::end(Util::AllowedHosts)) 
+	{
+		std::cout << _url->get_host() << " passed TrustCheck" << "\n";
+		return TRUE;
+	}
+
+	return FALSE;
 }

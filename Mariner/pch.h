@@ -7,5 +7,7 @@
 #include <iostream>
 #include <map>
 #include "ada.h"
+#include <algorithm>
+#include <iterator>
 
 #endif
