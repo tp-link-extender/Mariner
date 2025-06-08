@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "Hooks.h"
+#include "ada.h"
 
 #include <string>
 #include <iostream>
@@ -64,5 +65,14 @@ void __fastcall Hooks::DoHttpRewrite(void* _this, void*, void* a2, void* a3, voi
 BOOL _cdecl Hooks::DoTrustCheck(const char* url)
 {
 	std::cout << "[TrustCheck]: " << url << "\n";
+
+	ada::result<ada::url_aggregator> _url = ada::parse<ada::url_aggregator>(url);
+	if (!_url) {
+		std::cout << "Failed to parse url: " << url << "\n";
+		return FALSE;
+	}
+
+	std::cout << _url->get_host() << "\n";
+
 	return TRUE;
 }

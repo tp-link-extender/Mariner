@@ -90,6 +90,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -158,11 +159,13 @@
     <None Include="cpp.hint" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ada.h" />
     <ClInclude Include="D:\MinHook_134_lib\include\MinHook.h" />
     <ClInclude Include="Hooks.h" />
     <ClInclude Include="pch.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="ada.cpp" />
     <ClCompile Include="Hooks.cpp" />
     <ClCompile Include="Mariner.cpp" />
     <ClCompile Include="pch.cpp">
