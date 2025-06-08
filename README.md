@@ -13,6 +13,7 @@ Mariner has been tested to work on the late 2013 game client.
 Mariner requires the following in order to build and import:
 
 - Visual Studio 2022 (ensure you have the Visual C++ packages installed)
+- A compiler which supports C++20
 - StudPE
 - A computer, as it would be painful to live without one, wouldn't it?
 
@@ -42,3 +43,7 @@ Mariner detours subroutines within the client, which are given via their specifi
 - [x] HTTP rewrite
 - [x] Trust check
 - [ ] Public key
+
+## Credits
+
+- @pizzaboxer for being incredibly helpful and for providing POC code for the hooks
