@@ -36,3 +36,9 @@ These are recommended as they will allow you to not only reverse engineer subrou
 ## Functions
 
 Mariner detours subroutines within the client, which are given via their specific addresses (i.e. 2631E0). Therefore, if you want Mariner to apply its patches to a client of your choice, you must edit the addresses to which Mariner defaults to addresses for the subroutines you wish to detour.  
+
+## Functionality
+
+- [x] HTTP rewrite
+- [x] Trust check
+- [ ] Public key
