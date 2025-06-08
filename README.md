@@ -13,7 +13,6 @@ Mariner has been tested to work on the late 2013 game client.
 Mariner requires the following in order to build and import:
 
 - Visual Studio 2022 (ensure you have the Visual C++ packages installed)
-- vcpkg
 - StudPE
 - A computer, as it would be painful to live without one, wouldn't it?
 
