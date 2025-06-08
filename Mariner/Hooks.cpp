@@ -7,16 +7,15 @@
 #include <iostream>
 #include <algorithm>
 #include <iterator>
-
-const DWORD Hooks::ModuleBase = (DWORD)GetModuleHandle(NULL);
+#include <map>
 
 // Studio addresses
-const LPVOID Hooks::TrustCheckStudio = reinterpret_cast<LPVOID>(Hooks::ModuleBase + 0x2631E0);
-const LPVOID Hooks::DoHttpReqStudio = reinterpret_cast<LPVOID>(Hooks::ModuleBase + 0x4C59B0);
+const DWORD Hooks::TrustCheckStudio = 0x2631E0;
+const DWORD Hooks::DoHttpReqStudio = 0x4C59B0;
 
 // Player addresses
-const LPVOID Hooks::TrustCheckPlayer = reinterpret_cast<LPVOID>(Hooks::ModuleBase + 0x231E70);
-const LPVOID Hooks::DoHttpReqPlayer = reinterpret_cast<LPVOID>(Hooks::ModuleBase + 0x4511D0);
+const DWORD Hooks::TrustCheckPlayer = 0x231E70;
+const DWORD Hooks::DoHttpReqPlayer = 0x4511D0;
 
 // https://learn.microsoft.com/en-gb/windows/win32/api/winver/nf-winver-getfileversioninfoa?redirectedfrom=MSDN
 std::string Hooks::GetClientName()
@@ -53,11 +52,26 @@ void __fastcall Hooks::DoHttpRewrite(void* _this, void*, void* a2, void* a3, voi
 	std::cout << "\turl1: " << *url1 << "\n";
 	std::cout << "\turl2: " << *url2 << "\n";
 
-	size_t pos = url2->find("roblox.com");
-	if (pos != std::string::npos) {
-		url2->replace(pos, 10, "xtcy.dev");
-		std::cout << "\treplaced: " << *url2 << "\n";
+	size_t pos = url2->find("clientsettings.api.roblox.com");
+	if (pos != std::string::npos)
+	{
+		std::cout << "[DoHttpRewrite] Rewriting " << *url2 << "\n";
+		url2->replace(pos, 29, Util::ClientSettings);
 	}
+
+	pos = url2->find("roblox.com");
+	if (pos != std::string::npos)
+	{
+		std::cout << "[DoHttpRewrite] Rewriting " << *url2 << "\n";
+		url2->replace(pos, 10, Util::Domain);
+	}
+
+	//size_t pos = url2->find("roblox.com");
+	//if (pos != std::string::npos) {
+	//	url2->replace(pos, 10, "xtcy.dev");
+	//	std::cout << "\treplaced: " << *url2 << "\n";
+	//}
+
 
 	std::cout << "\n";
 
@@ -83,4 +97,61 @@ BOOL _cdecl Hooks::DoTrustCheck(const char* url)
 	}
 
 	return FALSE;
+}
+
+static stringTable_t g_stringTable;
+
+void Hooks::DoStringReplace(const char** text)
+{
+	// might be better if we explicitly define strings to replace
+	// instead of having automatic string replacement like this?
+	if (strstr(*text, "ROBLOX") == NULL || strchr(*text, '_') != NULL)
+		return;
+
+	std::cout << "[DoStringReplace] Rewriting " << *text << "\n";
+
+	std::string* str;
+
+	stringTable_t::const_iterator it = g_stringTable.find(*text);
+	if (it != g_stringTable.end())
+	{
+		// std::cout << "[" << func << "] Table hit\n";
+		str = it->second;
+	}
+	else
+	{
+		// std::cout << "[" << func << "] Table miss\n";
+
+		// heap allocation using 'new'
+		str = new std::string(*text);
+
+		size_t pos;
+		while ((pos = str->find("ROBLOX")) != std::string::npos)
+			str->replace(pos, 6, Util::Name);
+
+		while ((pos = str->find("Roblox")) != std::string::npos)
+			str->replace(pos, 6, Util::Name);
+
+		g_stringTable.insert(std::make_pair(*text, str));
+	}
+
+	*text = str->c_str();
+}
+
+void* (__cdecl* Hooks::pfnQCoreApplication__translate)(const char*, const char*, const char*, char, int);
+void* __cdecl Hooks::QCoreApplication__translate(const char* a1, const char* context, const char* sourceText, char encoding, int n)
+{
+	// all qt-specific contexts begin with 'Q' so we 
+	// can safely ignore those
+	if (strchr(context, 'Q') == NULL)
+		Hooks::DoStringReplace(&sourceText);
+
+	return Hooks::pfnQCoreApplication__translate(a1, context, sourceText, encoding, n);
+}
+
+void(__thiscall* Hooks::pfnQString__ctor)(void*, const char*);
+void __fastcall Hooks::QString__ctor(void* _this, void*, const char* text)
+{
+	Hooks::DoStringReplace(&text);
+	Hooks::pfnQString__ctor(_this, text);
 }

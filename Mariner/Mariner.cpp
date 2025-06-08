@@ -45,13 +45,17 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserv
         // Begin detouring
 
         static const Hook hooks[] = {
-            { "Trust Check", Hooks::TrustCheckStudio, Hooks::TrustCheckPlayer, Hooks::DoTrustCheck, NULL },
-            { "HTTP Rewrite", Hooks::DoHttpReqStudio, Hooks::DoHttpReqPlayer, Hooks::DoHttpRewrite, reinterpret_cast<LPVOID*>(&Hooks::pfnDoHttpRewrite) }
+            { NULL, "Trust Check", Hooks::TrustCheckStudio, Hooks::TrustCheckPlayer, Hooks::DoTrustCheck, NULL },
+            { NULL, "HTTP Rewrite", Hooks::DoHttpReqStudio, Hooks::DoHttpReqPlayer, Hooks::DoHttpRewrite, reinterpret_cast<LPVOID*>(&Hooks::pfnDoHttpRewrite) },
+            { L"qtcore4.dll", "QString::QString", 0x1777C0, NULL, Hooks::QString__ctor, reinterpret_cast<LPVOID*>(&Hooks::pfnQString__ctor) },
+            { L"qtcore4.dll", "QCoreApplication::translate", 0x119530, NULL, Hooks::QCoreApplication__translate, reinterpret_cast<LPVOID*>(&Hooks::pfnQCoreApplication__translate) }
         };
 
         for (int i = 0; i < sizeof(hooks) / sizeof(hooks[0]); i++)
         {
-            if (MH_CreateHook(isStudio ? hooks[i].addrStudio : hooks[i].addrPlayer, hooks[i].detour, hooks[i].ret) == MH_OK && MH_EnableHook(isStudio ? hooks[i].addrStudio : hooks[i].addrPlayer) == MH_OK)
+            LPVOID targetAddress = reinterpret_cast<LPVOID>((DWORD)GetModuleHandle(hooks[i].module) + (isStudio ? hooks[i].addrStudio : hooks[i].addrPlayer));
+
+            if (MH_CreateHook(targetAddress, hooks[i].detour, hooks[i].ret) == MH_OK && MH_EnableHook(targetAddress) == MH_OK)
             {
                 printf("Hooked %s\n", hooks[i].name);
             }
