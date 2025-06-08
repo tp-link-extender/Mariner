@@ -5,5 +5,6 @@
 #include "MinHook.h"
 #include <string>
 #include <iostream>
+#include <map>
 
 #endif
