@@ -39,6 +39,28 @@ std::string Hooks::GetClientName()
 	return fileN;
 }
 
+void(__thiscall* Hooks::pfnDoHttpRewrite)(void*, void*, void*, void*, void*, void*, bool, void*);
+void __fastcall Hooks::DoHttpRewrite(void* _this, void*, void* a2, void* a3, void* a4, void* a5, void* a6, bool a7, void* a8)
+{
+	std::cout << "[DoHttpRewrite]\n";
+
+	std::string* url1 = reinterpret_cast<std::string*>((int)_this);
+	std::string* url2 = reinterpret_cast<std::string*>((int)_this + 32);
+
+	std::cout << "\turl1: " << *url1 << "\n";
+	std::cout << "\turl2: " << *url2 << "\n";
+
+	size_t pos = url2->find("roblox.com");
+	if (pos != std::string::npos) {
+		url2->replace(pos, 10, "xtcy.dev");
+		std::cout << "\treplaced: " << *url2 << "\n";
+	}
+
+	std::cout << "\n";
+
+	Hooks::pfnDoHttpRewrite(_this, a2, a3, a4, a5, a6, a7, a8);
+}
+
 BOOL _cdecl Hooks::DoTrustCheck(const char* url)
 {
 	std::cout << "[TrustCheck]: " << url << "\n";
