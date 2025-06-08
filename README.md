@@ -43,3 +43,7 @@ Mariner detours subroutines within the client, which are given via their specifi
 - [x] HTTP rewrite
 - [x] Trust check
 - [ ] Public key
+
+## Credits
+
+- @pizzaboxer for being incredibly helpful and for providing POC code for the hooks
