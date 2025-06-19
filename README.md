@@ -46,4 +46,4 @@ Mariner detours subroutines within the client, which are given via their specifi
 
 ## Credits
 
-- @pizzaboxer for being incredibly helpful and for providing POC code for the hooks
+- @pizzaboxer for being incredibly helpful and for being a major contributor for the hooks
