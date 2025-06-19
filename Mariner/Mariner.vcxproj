@@ -99,7 +99,7 @@
       <AdditionalDependencies>$(ProjectDir)lib\libMinHook-x86-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>copy "$(OutDir)\Mariner.dll" "D:\GRLC\grlc\version-95d80c003e3a4601"</Command>
+      <Command>copy "$(OutDir)\Mariner.dll" "D:\Mercury3\version-95d80c003e3a4601"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">

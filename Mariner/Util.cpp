@@ -7,9 +7,11 @@
 const std::vector<std::string> Util::AllowedHosts {
 	"xtcy.dev",
 	"www.xtcy.dev",
-	"clientsettings.api.xtcy.dev",
+	"clientsettingsapi.xtcy.dev",
+	"setup.xtcy.dev",
 
 	"roblox.com",
+	"www.roblox.com",
 	"files.heliodex.cf",
 	"heliodex.cf"
 };

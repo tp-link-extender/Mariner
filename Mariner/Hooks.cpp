@@ -66,13 +66,6 @@ void __fastcall Hooks::DoHttpRewrite(void* _this, void*, void* a2, void* a3, voi
 		url2->replace(pos, 10, Util::Domain);
 	}
 
-	//size_t pos = url2->find("roblox.com");
-	//if (pos != std::string::npos) {
-	//	url2->replace(pos, 10, "xtcy.dev");
-	//	std::cout << "\treplaced: " << *url2 << "\n";
-	//}
-
-
 	std::cout << "\n";
 
 	Hooks::pfnDoHttpRewrite(_this, a2, a3, a4, a5, a6, a7, a8);
@@ -105,7 +98,24 @@ void Hooks::DoStringReplace(const char** text)
 {
 	// might be better if we explicitly define strings to replace
 	// instead of having automatic string replacement like this?
-	if (strstr(*text, "ROBLOX") == NULL || strchr(*text, '_') != NULL)
+
+	if (strstr(*text, "ROBLOX") == NULL && strstr(*text, "Roblox") == NULL && strstr(*text, "roblox.com") == NULL)
+		return;
+
+	// exclude Qt identifiers like 'QT_ROBLOX_STUDIO' or 'aboutRobloxAction'
+	if (strstr(*text, "action") != NULL || strstr(*text, "Action") != NULL || strchr(*text, '_') != NULL)
+		return;
+
+	// exclude Qt resource strings like ':/images/RobloxStudioSplash.png'
+	if (strncmp(*text, ":/", 2) == 0)
+		return;
+
+	// exclude legalese
+	if (strstr(*text, "Online Building Toy") != NULL)
+		return;
+
+	// exclude file browser specs like 'Roblox Place Files (*.rbxl)'
+	if (strstr(*text, "*.rbxl") != NULL)
 		return;
 
 	std::cout << "[DoStringReplace] Rewriting " << *text << "\n";
@@ -136,6 +146,47 @@ void Hooks::DoStringReplace(const char** text)
 	}
 
 	*text = str->c_str();
+}
+
+void* (__cdecl* Hooks::sub_404260_fp)(void* a1, void* a2, const char* a3);
+void* __cdecl Hooks::sub_404260_hook(void* a1, void* a2, const char* a3)
+{
+	Hooks::DoStringReplace(&a3);
+	return Hooks::sub_404260_fp(a1, a2, a3);
+}
+
+BOOL(WINAPI* Hooks::CreateDirectoryA_fp)(LPCSTR, LPSECURITY_ATTRIBUTES);
+BOOL WINAPI Hooks::CreateDirectoryA_hook(LPCSTR lpPathName, LPSECURITY_ATTRIBUTES lpSecurityAttributes)
+{
+	std::string str(lpPathName);
+
+	size_t pos = str.rfind("Roblox");
+
+	if (pos != std::string::npos)
+	{
+		std::cout << "[CreateDirectoryA] Rewriting path " << lpPathName << "\n";
+		str.replace(pos, 6, Util::Name);
+		lpPathName = str.c_str();
+	}
+
+	return Hooks::CreateDirectoryA_fp(lpPathName, lpSecurityAttributes);
+}
+
+// Path rewriting
+void* (__cdecl* Hooks::sub_7128A0_fp)(std::string*, bool, bool, char*);
+void* __cdecl Hooks::sub_7128A0_hook(std::string* a1, bool a2, bool a3, char* a4)
+{
+	void* result = Hooks::sub_7128A0_fp(a1, a2, a3, a4);
+
+	size_t pos = a1->rfind("Roblox");
+
+	if (pos != std::string::npos)
+	{
+		std::cout << "[sub_7128A0] Rewriting path " << *a1 << "\n";
+		a1->replace(pos, 6, Util::Name);
+	}
+
+	return result;
 }
 
 void* (__cdecl* Hooks::pfnQCoreApplication__translate)(const char*, const char*, const char*, char, int);

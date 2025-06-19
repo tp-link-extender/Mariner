@@ -12,6 +12,7 @@ typedef struct {
 	const char* name;
 	DWORD addrStudio;
 	DWORD addrPlayer;
+	LPVOID addrFunc;
 	LPVOID detour;
 	LPVOID* ret;
 } Hook;
@@ -33,6 +34,12 @@ public:
 	static void __fastcall QString__ctor(void* _this, void*, const char* text);
 	static void* (__cdecl* pfnQCoreApplication__translate)(const char*, const char*, const char*, char, int);
 	static void* __cdecl QCoreApplication__translate(const char* a1, const char* context, const char* sourceText, char encoding, int n);
+	static BOOL(WINAPI* CreateDirectoryA_fp)(LPCSTR, LPSECURITY_ATTRIBUTES);
+	static BOOL WINAPI CreateDirectoryA_hook(LPCSTR lpPathName, LPSECURITY_ATTRIBUTES lpSecurityAttributes);
+	static void* (__cdecl* sub_7128A0_fp)(std::string*, bool, bool, char*);
+	static void* __cdecl sub_7128A0_hook(std::string* a1, bool a2, bool a3, char* a4);
+	static void* (__cdecl* sub_404260_fp)(void* a1, void* a2, const char* a3);
+	static void* __cdecl sub_404260_hook(void* a1, void* a2, const char* a3);
 };
 
 #endif

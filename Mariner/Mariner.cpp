@@ -26,12 +26,12 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserv
 
         BOOL isStudio;
 
-        if (Hooks::GetClientName() == "RobloxStudioBeta.dll.exe")
+        if (Hooks::GetClientName() == "MercuryStudioBeta.exe")
         {
             std::cout << "Client type: Studio\n";
             isStudio = TRUE;
         }
-        else if (Hooks::GetClientName() == "RobloxPlayerBeta.dll.exe")
+        else if (Hooks::GetClientName() == "MercuryPlayerBeta.exe")
         {
             std::cout << "Client type: Player\n";
             isStudio = FALSE;
@@ -45,15 +45,23 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserv
         // Begin detouring
 
         static const Hook hooks[] = {
-            { NULL, "Trust Check", Hooks::TrustCheckStudio, Hooks::TrustCheckPlayer, Hooks::DoTrustCheck, NULL },
-            { NULL, "HTTP Rewrite", Hooks::DoHttpReqStudio, Hooks::DoHttpReqPlayer, Hooks::DoHttpRewrite, reinterpret_cast<LPVOID*>(&Hooks::pfnDoHttpRewrite) },
-            { L"qtcore4.dll", "QString::QString", 0x1777C0, NULL, Hooks::QString__ctor, reinterpret_cast<LPVOID*>(&Hooks::pfnQString__ctor) },
-            { L"qtcore4.dll", "QCoreApplication::translate", 0x119530, NULL, Hooks::QCoreApplication__translate, reinterpret_cast<LPVOID*>(&Hooks::pfnQCoreApplication__translate) }
+            { NULL,           "Trust Check",                 Hooks::TrustCheckStudio, Hooks::TrustCheckPlayer, NULL,             Hooks::DoTrustCheck,                NULL },
+            { NULL,           "HTTP Rewrite",                Hooks::DoHttpReqStudio,  Hooks::DoHttpReqPlayer,  NULL,             Hooks::DoHttpRewrite,               reinterpret_cast<LPVOID*>(&Hooks::pfnDoHttpRewrite) },
+            { L"qtcore4.dll", "QString::QString",            0x1777C0,                NULL,                    NULL,             Hooks::QString__ctor,               reinterpret_cast<LPVOID*>(&Hooks::pfnQString__ctor) },
+            { L"qtcore4.dll", "QCoreApplication::translate", 0x119530,                NULL,                    NULL,             Hooks::QCoreApplication__translate, reinterpret_cast<LPVOID*>(&Hooks::pfnQCoreApplication__translate) },
+            { NULL,           "CreateDirectoryA",            NULL,                    NULL,                    CreateDirectoryA, Hooks::CreateDirectoryA_hook,       reinterpret_cast<LPVOID*>(&Hooks::CreateDirectoryA_fp) },
+            { NULL,           "sub_7128A0",                  0x3128A0,                0x2FE010,                NULL,             Hooks::sub_7128A0_hook,             reinterpret_cast<LPVOID*>(&Hooks::sub_7128A0_fp) },
+            { NULL,           "sub_404260",                  0x004260,                NULL,                    NULL,             Hooks::sub_404260_hook,             reinterpret_cast<LPVOID*>(&Hooks::sub_404260_fp) },
         };
 
         for (int i = 0; i < sizeof(hooks) / sizeof(hooks[0]); i++)
         {
-            LPVOID targetAddress = reinterpret_cast<LPVOID>((DWORD)GetModuleHandle(hooks[i].module) + (isStudio ? hooks[i].addrStudio : hooks[i].addrPlayer));
+            LPVOID targetAddress = hooks[i].addrFunc;
+
+            if (targetAddress == NULL)
+            {
+                targetAddress = reinterpret_cast<LPVOID>((DWORD)GetModuleHandle(hooks[i].module) + (isStudio ? hooks[i].addrStudio : hooks[i].addrPlayer));
+            }
 
             if (MH_CreateHook(targetAddress, hooks[i].detour, hooks[i].ret) == MH_OK && MH_EnableHook(targetAddress) == MH_OK)
             {
@@ -64,6 +72,8 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserv
                 printf("Failed to hook %s\n", hooks[i].name);
             }
         }
+
+        CreateMutexA(NULL, TRUE, "RobloxCrashDumpUploaderMutex");
     }
 
     return TRUE;
