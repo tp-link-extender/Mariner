@@ -36,7 +36,7 @@ These are recommended as they will allow you to not only reverse engineer subrou
 
 ## Functions
 
-Mariner detours subroutines within the client, which are given via their specific addresses (i.e. 2631E0). Therefore, if you want Mariner to apply its patches to a client of your choice, you must edit the addresses to which Mariner defaults to addresses for the subroutines you wish to detour.  
+Mariner detours subroutines within the client, which are given via their specific addresses (i.e. 2631E0). Therefore, if you want Mariner to apply its patches to a client of your choice, you must edit the addresses to the addresses you wish to hook accordingly. Make sure to subtract the module base from your address - for example, the module base for 2013 is 0x400000, so 0x400000 must be subtracted from all of the hook addresses.
 
 ## Functionality
 
