@@ -71,8 +71,8 @@ void __fastcall Hooks::DoHttpRewrite(void* _this, void*, void* a2, void* a3, voi
 	Hooks::pfnDoHttpRewrite(_this, a2, a3, a4, a5, a6, a7, a8);
 }
 
-BOOL _cdecl Hooks::DoTrustCheck(const char* url)
-{
+BOOL CheckURL(const char* url)
+{	
 	std::cout << "[TrustCheck]: " << url << "\n";
 
 	ada::result<ada::url_aggregator> _url = ada::parse<ada::url_aggregator>(url);
@@ -83,7 +83,7 @@ BOOL _cdecl Hooks::DoTrustCheck(const char* url)
 
 	// Check host against allowed hosts
 
-	if (std::find(std::begin(Util::AllowedHosts), std::end(Util::AllowedHosts), _url->get_host()) != std::end(Util::AllowedHosts)) 
+	if (std::find(std::begin(Util::AllowedHosts), std::end(Util::AllowedHosts), _url->get_host()) != std::end(Util::AllowedHosts))
 	{
 		std::cout << _url->get_host() << " passed TrustCheck" << "\n";
 		return TRUE;
@@ -92,10 +92,14 @@ BOOL _cdecl Hooks::DoTrustCheck(const char* url)
 	return FALSE;
 }
 
+BOOL _cdecl Hooks::DoTrustCheck(const char* url)
+{
+	return CheckURL(url);
+}
+
 BOOL _cdecl Hooks::DoUrlCheck(const char* url)
 {
-	std::cout << "[DoUrlCheck]: " << url << "\n";
-	return TRUE;
+	return CheckURL(url);
 }
 
 static stringTable_t g_stringTable;
