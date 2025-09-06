@@ -52,18 +52,18 @@ void __fastcall Hooks::DoHttpRewrite(void* _this, void*, void* a2, void* a3, voi
 	std::cout << "\turl1: " << *url1 << "\n";
 	std::cout << "\turl2: " << *url2 << "\n";
 
-	size_t pos = url2->find("clientsettings.api.roblox.com");
-	if (pos != std::string::npos)
-	{
-		std::cout << "[DoHttpRewrite] Rewriting " << *url2 << "\n";
-		url2->replace(pos, 29, Util::ClientSettings);
-	}
-
-	pos = url2->find("roblox.com");
+	size_t pos = url2->find("roblox.com");
 	if (pos != std::string::npos)
 	{
 		std::cout << "[DoHttpRewrite] Rewriting " << *url2 << "\n";
 		url2->replace(pos, 10, Util::Domain);
+	}
+
+	pos = url2->find(".robloxlabs.com");
+	if (pos != std::string::npos)
+	{
+		std::cout << "[DoHttpRewrite] Rewriting " << *url2 << "\n";
+		url2->replace(pos, 16, "");
 	}
 
 	std::cout << "\n";
