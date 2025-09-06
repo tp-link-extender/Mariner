@@ -92,6 +92,12 @@ BOOL _cdecl Hooks::DoTrustCheck(const char* url)
 	return FALSE;
 }
 
+BOOL _cdecl Hooks::DoUrlCheck(const char* url)
+{
+	std::cout << "[DoUrlCheck]: " << url << "\n";
+	return TRUE;
+}
+
 static stringTable_t g_stringTable;
 
 void Hooks::DoStringReplace(const char** text)

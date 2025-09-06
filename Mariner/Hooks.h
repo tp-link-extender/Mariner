@@ -27,6 +27,7 @@ public:
 	static const DWORD ModuleBase;
 	static std::string GetClientName();
 	static BOOL _cdecl DoTrustCheck(const char* url);
+	static BOOL _cdecl DoUrlCheck(const char* url);
 	static void(__thiscall* pfnDoHttpRewrite)(void*, void*, void*, void*, void*, void*, bool, void*);
 	static void __fastcall DoHttpRewrite(void* _this, void*, void* a2, void* a3, void* a4, void* a5, void* a6, bool a7, void* a8);
 	static void DoStringReplace(const char** text);

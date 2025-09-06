@@ -99,7 +99,7 @@
       <AdditionalDependencies>$(ProjectDir)lib\libMinHook-x86-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>copy "$(OutDir)\Mariner.dll" "D:\Mercury3\version-95d80c003e3a4601"</Command>
+      <Command>copy "$(OutDir)\Mariner.dll" "G:\Mercury Development\staging"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -129,12 +129,18 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalIncludeDirectories>G:\MinHook_134_lib\include\MinHook.h;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
+      <AdditionalDependencies>G:\MinHook_134_lib\lib\libMinHook.x86.lib</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>copy "$(OutDir)\Mariner.dll" "G:\Mercury Development\staging"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -160,7 +166,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ada.h" />
-    <ClInclude Include="D:\MinHook_134_lib\include\MinHook.h" />
+    <ClInclude Include="G:\MinHook_134_lib\include\MinHook.h" />
     <ClInclude Include="Hooks.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Util.h" />
