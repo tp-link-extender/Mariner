@@ -45,9 +45,11 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserv
         // Begin detouring
 
         static const Hook hooks[] = {
-              { NULL,           "Trust Check",                 Hooks::TrustCheckStudio, Hooks::TrustCheckPlayer, NULL,             Hooks::DoTrustCheck,                NULL },
               { NULL,           "HTTP Rewrite",                Hooks::DoHttpReqStudio,  Hooks::DoHttpReqPlayer,  NULL,             Hooks::DoHttpRewrite,               reinterpret_cast<LPVOID*>(&Hooks::pfnDoHttpRewrite) },
-              { NULL,           "URL Check",                   0x19B700,                NULL,                    NULL,             Hooks::DoUrlCheck,                  NULL },
+              { NULL,           "Trust Check",                 Hooks::TrustCheckStudio, Hooks::TrustCheckPlayer, NULL,             Hooks::DoTrustCheck,                NULL },
+              { NULL,           "URL Check",                   0x19B700,                0x123EA0,                NULL,             Hooks::DoUrlCheck,                  NULL },
+              { NULL,           "SSL Pinning",                 0x262B50,                NULL,                    NULL,             Hooks::sub_626B50_hook,             NULL },
+           // { NULL,           "ProtectedString",             0x326770,                NULL,                    NULL,             Hooks::sub_726770_hook,             reinterpret_cast<LPVOID*>(&Hooks::sub_726770_fp) },
            // { L"qtcore4.dll", "QString::QString",            0x1777C0,                NULL,                    NULL,             Hooks::QString__ctor,               reinterpret_cast<LPVOID*>(&Hooks::pfnQString__ctor) },
            // { L"qtcore4.dll", "QCoreApplication::translate", 0x119530,                NULL,                    NULL,             Hooks::QCoreApplication__translate, reinterpret_cast<LPVOID*>(&Hooks::pfnQCoreApplication__translate) },
            // { NULL,           "CreateDirectoryA",            NULL,                    NULL,                    CreateDirectoryA, Hooks::CreateDirectoryA_hook,       reinterpret_cast<LPVOID*>(&Hooks::CreateDirectoryA_fp) },

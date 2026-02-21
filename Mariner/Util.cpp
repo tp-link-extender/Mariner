@@ -5,10 +5,12 @@
 #include <string>
 
 const std::vector<std::string> Util::AllowedHosts {
-	"xtcy.dev",
-	"www.xtcy.dev",
-	"api.xtcy.dev",
-	"setup.xtcy.dev",
+	"mercs.dev",
+	"www.mercs.dev",
+	"api.mercs.dev",
+	"setup.mercs.dev",
+	"mercury.test:5173",
+	"localhost",
 
 	"roblox.com",
 	"www.roblox.com",
@@ -16,6 +18,6 @@ const std::vector<std::string> Util::AllowedHosts {
 	"heliodex.cf"
 };
 
-const char Util::Domain[] = "xtcy.dev";
+const char Util::Domain[] = "mercs.dev";
 const char Util::Name[] = "Mercury";
-const char Util::ClientSettings[] = "clientsettingsapi.xtcy.dev";
+const char Util::ClientSettings[] = "clientsettingsapi.mercs.dev";

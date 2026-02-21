@@ -47,38 +47,38 @@ void __fastcall Hooks::DoHttpRewrite(void* _this, void*, void* a2, void* a3, voi
 	std::cout << "[DoHttpRewrite]\n";
 
 	std::string* url1 = reinterpret_cast<std::string*>((int)_this);
-	std::string* url2 = reinterpret_cast<std::string*>((int)_this + 32);
+	std::string* url2 = reinterpret_cast<std::string*>((int)_this + 36);
+	const char* url2str = url2->c_str();
 
-	std::cout << "\turl1: " << *url1 << "\n";
-	std::cout << "\turl2: " << *url2 << "\n";
+	//std::cout << "\turl1: " << *url1 << "\n";
+	//std::cout << "\turl2: " << *url2 << "\n";
+	printf("\turl2: %s\n", url2str);
 
 	size_t pos = url2->find("roblox.com");
 	if (pos != std::string::npos)
 	{
-		std::cout << "[DoHttpRewrite] Rewriting " << *url2 << "\n";
+		printf("[DoHttpRewrite] Rewriting %s\n", url2str);
 		url2->replace(pos, 10, Util::Domain);
 	}
 
 	pos = url2->find(".robloxlabs.com");
 	if (pos != std::string::npos)
 	{
-		std::cout << "[DoHttpRewrite] Rewriting " << *url2 << "\n";
+		printf("[DoHttpRewrite] Rewriting %s\n", url2str);
 		url2->replace(pos, 16, "");
 	}
-
-	std::cout << "\n";
 
 	Hooks::pfnDoHttpRewrite(_this, a2, a3, a4, a5, a6, a7, a8);
 }
 
-BOOL CheckURL(const char* url)
+BOOL CheckURL(const char* url, bool opposite = false)
 {	
 	std::cout << "[TrustCheck]: " << url << "\n";
 
 	ada::result<ada::url_aggregator> _url = ada::parse<ada::url_aggregator>(url);
 	if (!_url) {
 		std::cout << "Failed to parse url: " << url << "\n";
-		return FALSE;
+		return opposite ? TRUE : FALSE;
 	}
 
 	// Check host against allowed hosts
@@ -86,10 +86,10 @@ BOOL CheckURL(const char* url)
 	if (std::find(std::begin(Util::AllowedHosts), std::end(Util::AllowedHosts), _url->get_host()) != std::end(Util::AllowedHosts))
 	{
 		std::cout << _url->get_host() << " passed TrustCheck" << "\n";
-		return TRUE;
+		return opposite ? FALSE : TRUE;
 	}
 
-	return FALSE;
+	return opposite ? TRUE : FALSE;
 }
 
 BOOL _cdecl Hooks::DoTrustCheck(const char* url)
@@ -100,6 +100,11 @@ BOOL _cdecl Hooks::DoTrustCheck(const char* url)
 BOOL _cdecl Hooks::DoUrlCheck(const char* url)
 {
 	return CheckURL(url);
+}
+
+BOOL _cdecl Hooks::sub_626B50_hook(const char* url)
+{
+	return CheckURL(url, true);
 }
 
 static stringTable_t g_stringTable;
@@ -180,6 +185,19 @@ BOOL WINAPI Hooks::CreateDirectoryA_hook(LPCSTR lpPathName, LPSECURITY_ATTRIBUTE
 	}
 
 	return Hooks::CreateDirectoryA_fp(lpPathName, lpSecurityAttributes);
+}
+
+// RBX::ProtectedString rewriting
+void* (__cdecl* Hooks::sub_726770_fp)(int, std::string&);
+void* __cdecl Hooks::sub_726770_hook(int a1, std::string& script)
+{
+	if (script.compare("loadfile('http://www.mercs.dev//game/studio.ashx')()") == 0)
+	{
+		std::cout << "[" __FUNCTION__ "] Rewriting script '" << script << "'\n";
+		script = "loadfile('rbxasset://scripts/Studio.lua')()";
+	}
+
+	return Hooks::sub_726770_fp(a1, script);
 }
 
 // Path rewriting

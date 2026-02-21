@@ -28,8 +28,11 @@ public:
 	static std::string GetClientName();
 	static BOOL _cdecl DoTrustCheck(const char* url);
 	static BOOL _cdecl DoUrlCheck(const char* url);
+	static BOOL _cdecl sub_626B50_hook(const char* url);
 	static void(__thiscall* pfnDoHttpRewrite)(void*, void*, void*, void*, void*, void*, bool, void*);
 	static void __fastcall DoHttpRewrite(void* _this, void*, void* a2, void* a3, void* a4, void* a5, void* a6, bool a7, void* a8);
+	static void* (__cdecl* sub_726770_fp)(int, std::string&);
+	static void* __cdecl sub_726770_hook(int a1, std::string& script);
 	static void DoStringReplace(const char** text);
 	static void(__thiscall* pfnQString__ctor)(void*, const char*);
 	static void __fastcall QString__ctor(void* _this, void*, const char* text);
